@@ -1,0 +1,652 @@
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身体曼荼羅★身体の各部位と意図マップ</title>
+    <!-- Tailwind CSS CDNの読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Interフォントを適用 */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* 淡い背景色 */
+            line-height: 1.6; /* 行間を広げて読みやすく */
+        }
+        /* details要素のデフォルトの矢印を非表示にし、カスタムアイコンを配置 */
+        details > summary {
+            list-style: none; /* デフォルトの矢印を非表示 */
+            cursor: pointer;
+            padding: 1rem;
+            background-color: #ffffff; /* 白い背景 */
+            border-radius: 0.5rem; /* 角を丸く */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 軽い影 */
+            transition: background-color 0.3s ease; /* ホバー時のトランジション */
+            position: relative;
+            display: flex; /* flexboxで内容を配置 */
+            justify-content: space-between; /* タイトルとアイコンを両端に */
+            align-items: center; /* 垂直方向中央揃え */
+        }
+        /* カスタムの開閉アイコン */
+        details > summary::after {
+            content: '+'; /* 閉じたときのアイコン */
+            font-weight: bold;
+            font-size: 1.25rem; /* アイコンのサイズ */
+            color: #6b7280; /* グレーのアイコン色 */
+            transition: transform 0.3s ease; /* 回転アニメーション */
+        }
+        details[open] > summary::after {
+            content: '-'; /* 開いたときのアイコン */
+            transform: rotate(0deg); /* 開いたときに回転しない */
+        }
+        details[open] > summary {
+            background-color: #e2e8f0; /* 開いたときの背景色 */
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        /* 開いたときに表示される内容のスタイル */
+        details .content {
+            padding: 1rem;
+            background-color: #f8fafc; /* 非常に淡い背景色 */
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 軽い影 */
+            border-top: 1px solid #cbd5e0; /* 上部に細い線 */
+            color: #4a5568; /* 濃いめのテキスト色 */
+        }
+
+        /* SVGのスタイル */
+        .body-part-svg {
+            stroke: #334155; /* 濃い枠線 */
+            stroke-width: 1.5;
+            transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+        }
+        /* 各部位の色 */
+        #svg-head { fill: #fca5a5; } /* 薄い赤 */
+        #svg-neck { fill: #fed7aa; } /* 薄いオレンジ */
+        #svg-torso { fill: #a7f3d0; } /* 薄い緑 */
+        #svg-left-arm, #svg-right-arm { fill: #c4b5fd; } /* 薄い紫 */
+        #svg-left-leg, #svg-right-leg { fill: #bfdbfe; } /* 薄い青 */
+        #svg-body-outline { fill: #f0f4f8; stroke: #94a3b8; stroke-width: 2; } /* 全身アウトライン */
+
+        .body-part-svg.highlight {
+            fill: #ef4444; /* ハイライト色 (濃い赤) */
+            stroke: #b91c1c; /* ハイライト枠線 (さらに濃い赤) */
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8)); /* 強い影 */
+        }
+        .body-part-svg:hover:not(.highlight) {
+            filter: brightness(1.1); /* ホバーで少し明るく */
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
+        }
+
+        /* オーディオプレイヤーのスタイル */
+        #audio-player-container, #meditation-audio-player-wrapper {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            min-height: 80px; /* 最小高さを確保 */
+        }
+        #loading-audio-indicator, #meditation-loading-indicator .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* レスポンシブ調整 */
+        @media (max-width: 767px) {
+            .main-grid {
+                grid-template-columns: 1fr; /* モバイルでは1列 */
+            }
+            #body-parts-container {
+                max-height: 400px; /* モバイルでのリストの高さ */
+            }
+            .svg-container {
+                height: 350px; /* モバイルでのSVGの高さ */
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <header class="text-center mb-8 w-full">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-2">身体曼荼羅★身体の各部位と意図マップ</h1>
+        <p class="text-lg text-gray-600 mb-4">
+            ゆっくりと各部位に意識の光を当てて、優しく呼吸を送りながら、詩を読み上げてみてください。<br>
+            細胞がふわっと緩み、身体と世界がつながっていく感覚を味わってください。
+        </p>
+    </header>
+
+    <main class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 main-grid">
+        <!-- SVG身体マップ -->
+        <div class="flex flex-col items-center justify-center bg-white rounded-xl shadow-lg p-4 svg-container">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">身体マップ</h2>
+            <!-- ガイダンスボタン -->
+            <button id="guidance-button" class="px-4 py-2 mb-4 bg-purple-500 text-white font-semibold rounded-full shadow-md hover:bg-purple-600 transition-colors duration-300 transform hover:scale-105">
+                ガイダンス
+            </button>
+            <svg viewBox="0 0 200 300" class="w-48 h-72 object-contain mx-auto">
+                <g id="body-svg-groups">
+                    <!-- 全身のアウトライン（一般部位用） -->
+                    <path id="svg-body-outline" data-part-group="body-outline" class="body-part-svg" 
+                          d="M100,15 C115,15 125,25 125,40 C125,55 115,65 100,65 C85,65 75,55 75,40 C75,25 85,15 100,15 Z 
+                             M95,65 L105,65 L105,80 L95,80 Z 
+                             M80,80 C75,80 70,85 70,90 L70,120 C70,125 75,130 80,130 L82,130 
+                             L85,140 L85,170 C85,175 90,180 95,180 L105,180 C110,180 115,175 115,170 
+                             L115,140 L118,130 L120,130 C125,130 130,125 130,120 L130,90 C130,85 125,80 120,80 Z 
+                             M70,95 C65,95 55,100 50,110 L45,140 C43,150 45,160 50,165 L65,175 
+                             M130,95 C135,95 145,100 150,110 L155,140 C157,150 155,160 150,165 L135,175 
+                             M95,180 L95,220 C95,225 90,230 85,230 L85,270 C85,275 90,280 95,280 
+                             M105,180 L105,220 C105,225 110,230 115,230 L115,270 C115,275 110,280 105,280">
+                    </path>
+
+                    <!-- 頭部（可愛らしい楕円形） -->
+                    <ellipse id="svg-head" data-part-group="head" class="body-part-svg" 
+                             cx="100" cy="40" rx="25" ry="25"></ellipse>
+                    
+                    <!-- 首（短い円柱） -->
+                    <rect id="svg-neck" data-part-group="neck" class="body-part-svg" 
+                          x="95" y="65" width="10" height="15" rx="5"></rect>
+                    
+                    <!-- 胴体（丸みのある長方形） -->
+                    <path id="svg-torso" data-part-group="torso" class="body-part-svg" 
+                          d="M80,80 C75,80 70,85 70,90 L70,120 C70,125 75,130 80,130 L82,130 
+                             L85,140 L85,170 C85,175 90,180 95,180 L105,180 C110,180 115,175 115,170 
+                             L115,140 L118,130 L120,130 C125,130 130,125 130,120 L130,90 C130,85 125,80 120,80 Z">
+                    </path>
+                    
+                    <!-- 左腕 -->
+                    <path id="svg-left-arm" data-part-group="arms" class="body-part-svg" 
+                          d="M70,95 C65,95 55,100 50,110 L45,140 C43,150 45,160 50,165 L65,175">
+                    </path>
+                    
+                    <!-- 右腕 -->
+                    <path id="svg-right-arm" data-part-group="arms" class="body-part-svg" 
+                          d="M130,95 C135,95 145,100 150,110 L155,140 C157,150 155,160 150,165 L135,175">
+                    </path>
+                    
+                    <!-- 左脚 -->
+                    <path id="svg-left-leg" data-part-group="legs" class="body-part-svg" 
+                          d="M95,180 L95,220 C95,225 90,230 85,230 L85,270 C85,275 90,280 95,280">
+                    </path>
+                    
+                    <!-- 右脚 -->
+                    <path id="svg-right-leg" data-part-group="legs" class="body-part-svg" 
+                          d="M105,180 L105,220 C105,225 110,230 115,230 L115,270 C115,275 110,280 105,280">
+                    </path>
+                </g>
+            </svg>
+        </div>
+
+        <!-- 部位と意図のリスト -->
+        <div id="body-parts-container" class="w-full space-y-4 bg-white rounded-xl shadow-lg p-4 max-h-[600px] overflow-y-auto">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">部位と意図</h2>
+            <!-- JavaScriptによってここにコンテンツが挿入されます -->
+        </div>
+    </main>
+
+    <!-- 誘導瞑想セクション -->
+    <!--<div id="meditation-section" class="w-full max-w-2xl mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl shadow-lg text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">🌿存在とつながる「身体曼荼羅」誘導瞑想</h2>
+        <p class="text-lg text-gray-700 mb-6">── 光の目覚めと溶けあう祈り ──</p>
+        <button id="start-meditation-button" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105">
+            瞑想を開始
+        </button>
+        <div id="meditation-audio-player-wrapper" class="mt-4 hidden">
+            <div id="meditation-loading-indicator" class="loading-spinner"></div>
+            <p class="text-gray-600 text-sm mt-2">瞑想音声を準備中...</p>
+            <audio id="meditation-audio-player" class="w-full mt-4 hidden" controls></audio>
+        </div>
+    </div>-->
+
+    <!-- オーディオプレイヤー（各部位の詩用） -->
+    <div id="audio-player-container" class="w-full max-w-2xl mt-8">
+        <div id="loading-audio-indicator" class="hidden"></div>
+        <audio id="audio-player" controls class="w-full hidden"></audio>
+        <span id="audio-message" class="text-gray-600 text-sm">部位を選択して音声を聞いてみましょう。</span>
+    </div>
+
+    <footer class="text-center mt-8 text-gray-500 text-sm w-full">
+        <p>&copy; 2025 身体曼荼羅プロジェクト</p>
+    </footer>
+
+    <script>
+        // 各身体部位とその意図のデータ
+        const bodyPartsData = [
+            // 頭部グループ
+            { name: "頭頂部", partGroup: "head", partId: "svg-head", intentions: ["天の扉がここにある、静かに開いています", "宇宙の光が流れ込み、わたしを満たしていく", "無限の広がりと、ひとつになります", "わたしは空とつながり、澄んだ意識を受け取ります"] },
+            { name: "額（ひたい）", partGroup: "head", partId: "svg-head", intentions: ["明晰な光が額（ひたい）に宿り、雲を晴らします", "思考の波が静まり、智慧の泉が湧き上がる", "ここから、新しい世界が見えてきます"] },
+            { name: "松果体（しょうかたい）", partGroup: "head", partId: "svg-head", intentions: ["光のレンズ", "魂の約束とつながり", "わたしを超えた知恵と響き合います", "内なる星が、静かに輝いています"] },
+            { name: "眉間", partGroup: "head", partId: "svg-head", intentions: ["深いまなざしで、真実を見つめます", "迷いがあっても、奥には静（しず）けさがある", "第三の目で、見えないものを見ます", "わたしは真実を見つめ、内なる光と結ばれます"] },
+            { name: "まぶた", partGroup: "head", partId: "svg-head", intentions: ["そっと閉じて、内なる世界へ", "やすらぎの扉、ここから静寂が始まる", "疲れた心を、やわらかく包みます"] },
+            { name: "目", partGroup: "head", partId: "svg-head", intentions: ["この瞳に映るすべてが、愛（いと）しいもの", "光と影、美しさと痛みを受け取って", "見ることで、世界とひとつになります"] },
+            { name: "鼻", partGroup: "head", partId: "svg-head", intentions: ["いのちの息が、鼻の奥を通り抜けて", "大気と私の境界が溶けていく", "呼吸とともに、今この瞬間を受け取ります"] },
+            { name: "頬", partGroup: "head", partId: "svg-head", intentions: ["やわらかな丘に、温（ぬく）もりが宿っています", "笑顔の記憶が細胞に刻まれて", "愛されている感覚が、ここから広がります", "世界に触れて", "嬉しさも、涙も、震えも", "この頬がすべてを受け取ってくれていた"] },
+            { name: "耳", partGroup: "head", partId: "svg-head", intentions: ["世界の音楽が、このやわらかな渦を通って", "魂の奥へと届いています", "沈黙の中にも、いのちの歌が聞こえます"] },
+            { name: "口", partGroup: "head", partId: "svg-head", intentions: ["この扉から、愛が形になって生まれます", "言葉という翼に乗せて、心を運んでいく", "受け取ることも、与えることも、ここから始まります"] },
+            { name: "唇", partGroup: "head", partId: "svg-head", intentions: ["やわらかな境界、内と外をつなぐ場所", "愛の言葉がここから生まれ、優しさが伝わっていく", "触れ合うことで、心も触れ合います"] },
+            { name: "顎", partGroup: "head", partId: "svg-head", intentions: ["しっかりと意志をもち、支えながら、", "やわらかく開いていく", "噛みしめてきた痛みを緩めて ふわっと緩みます"] },
+
+            // 首グループ
+            { name: "喉・声", partGroup: "neck", partId: "svg-neck", intentions: ["この声は、いのちの響き。", "恐れを超えて、伝えたいものがある", "わたしの奥から、震えが立ちのぼる", "私の存在の震えを、音にして、世界に響かせます", "吐いて、顎と喉がふわっとゆるみます。", "ここは、震えを音に変える場所。", "私は、私の震えを、ありのまま響かせます。"] },
+            { name: "首", partGroup: "neck", partId: "svg-neck", intentions: ["天と地をつなぐ、やわらかな橋", "しなやかに動きながら、バランスを保って", "自由と安定が、ここで出会います", "吸って、首が自由にほどけます。", "ここは、思考と感覚をつなぐ橋。", "私は、軽やかに世界とつながります。"] },
+            { name: "頸椎", partGroup: "neck", partId: "svg-neck", intentions: ["やわらかな首の骨たちが、視野を広げてくれる", "固定された世界から、自由な世界へ 新しい角度から、", "人生を眺めます"] },
+
+
+            // 胴体グループ (Torso)
+            { name: "肩", partGroup: "torso", partId: "svg-torso", intentions: ["重荷を降ろして、翼のように軽やか", "大きく息を吸うと、肩が空に向かって開いていく", "背負う（せおう）ものと手放すもの、その境界がここにあります"] },
+            { name: "胸（むね）", partGroup: "torso", partId: "svg-torso", intentions: ["心臓の部屋に、愛の火が燃えています", "勇気という翼を広げて、世界を抱きしめる", "呼吸とともに、愛が循環していきます", "わたしは愛を受け取り、ひとしずくのぬくもりとして注ぎます"] },
+            { name: "背中", partGroup: "torso", partId: "svg-torso", intentions: ["見えない翼がここにあって、わたしを支えています", "過去の記憶も、未来への希望も背負いながら", "まっすぐに立つ強さを、ここから生み出します", "わたしは見守る存在。静かに支え、包みこみます", "（…風のような存在がそっと背中を撫でていく）"] },
+            { name: "胸椎（きょうつい）", partGroup: "torso", partId: "svg-torso", intentions: ["心臓の守り神、肺の支え手", "呼吸とともに、開放感が背骨を通って流れる", "愛の力が、ここから全身へと広がります"] },
+            { name: "肋骨", partGroup: "torso", partId: "svg-torso", intentions: ["吐いて、肋骨が静かに開きます。", "ここは、内なるリズムを響かせる響胴（きょうどう）。", "私は、自分のリズムで世界と共鳴します。"] },
+            { name: "心臓", partGroup: "torso", partId: "svg-torso", intentions: ["愛のポンプ、いのちのドラム", "鼓動とともに、愛が全身を巡っていく", "この胸の奥で、宇宙のリズムと同調しています"] },
+            { name: "肺", partGroup: "torso", partId: "svg-torso", intentions: ["空気の海で、いのちが踊っています", "吸って吐いて、世界と私が溶け合って", "呼吸とともに、新しい私が生まれ続けます"] },
+            { name: "胃", partGroup: "torso", partId: "svg-torso", intentions: ["人生の味わいを、ゆっくりと消化して", "経験という栄養を、血肉（けつにく）に変えていく", "受け取ったものを、愛に変換する錬金術師です"] },
+            { name: "腸", partGroup: "torso", partId: "svg-torso", intentions: ["長い旅路（たびじ）で、必要なものを選び取って", "不要なものは感謝とともに手放します", "直感の声が、この深いところから聞こえてきます"] },
+            { name: "肝臓", partGroup: "torso", partId: "svg-torso", intentions: ["沈黙の働き者、浄化の魔法使い", "毒を薬に変える、やさしい錬金術", "再生の力が、ここに静かに宿っています"] },
+            { name: "腎臓（じんぞう）", partGroup: "torso", partId: "svg-torso", intentions: ["いのちの水を、清らかに保つ守り神", "エッセンスを残し、余分を流して", "生命の源を、大切に濾過しています"] },
+            { name: "おへそ・丹田", partGroup: "torso", partId: "svg-torso", intentions: ["吐いて、中心に意識が集まります。", "ここは、存在の火が灯るところ。", "私は、深く息づき、自分自身で在ります。"] },
+            { name: "腰椎", partGroup: "torso", partId: "svg-torso", intentions: ["人生の重みを受け止める、やさしい巨人", "前に進む力を、腰の奥から生み出して", "大地に根ざした強さが、ここにあります"] },
+            { name: "仙骨", partGroup: "torso", partId: "svg-torso", intentions: ["聖なる骨、いのちの源泉", "ここに神聖なエネルギーが宿って", "生命力の炎が、静かに燃え続けています"] },
+            { name: "尾骨", partGroup: "torso", partId: "svg-torso", intentions: ["大地への根っこ、原始の記憶", "動物としての野性と、人間としての品格", "両方がここで出会い、調和しています"] },
+            { name: "腰", partGroup: "torso", partId: "svg-torso", intentions: ["人生を支える、やさしい土台", "ここに中心軸があって、すべてがここから始まる", "どっしりとした安定感が、腰に宿っています", "大地とつながる　命の土台", "わたしを支え、揺らぎの中で安定します", "わたしは命の根っこ。力強く、大地とつながっています", "ここは、内なる力としなやかさの源。", "私は、流れに抗わず、柔らかくしなやかに立ち上がります。", "（…どっしりと根が張り、大地に支えられる感覚）"] },
+            { name: "骨盤", partGroup: "torso", partId: "svg-torso", intentions: ["吸って、骨盤に灯りを灯します", "ここは、大地とつながる揺るぎない器", "私はこの世界で生きる存在として、根づいています", "ここは創造の器", "いのちを宿し、育て、放つ場所", "わたしの女性性・生命性の中心"] },
+            { name: "子宮", partGroup: "torso", partId: "svg-torso", intentions: ["聖なる宮殿、創造の神殿", "月のリズムと共に呼吸して、いのちを育む力が宿っています", "ここから新しい世界が生まれ、愛が形になっていく", "たとえ空（から）であっても、無限の可能性を抱いています", "宇宙とつながる聖なる場所", "静けさと神秘に包まれた源", "ここに、わたしの祈りが宿る"] },
+            { name: "お尻", partGroup: "torso", partId: "svg-torso", intentions: ["大地との接点、安定の座布団", "ここにどっしりと腰を据えて、人生と向き合う", "土台の安心感が、ここから生まれます", "ここは、静かな重力の受容体。", "私は、余計な力を抜いて、委ねます。", "リラックスして、どっしりと座る", "安心と受容の感覚を、ここに広げていきます"] },
+
+            // 腕グループ
+            { name: "腕", partGroup: "arms", partId: "svg-left-arm", intentions: ["愛を届ける、やわらかな橋 抱きしめること、", "創り出すこと、すべてがここから始まる", "力と優しさが、この腕に宿っています"] },
+            { name: "手", partGroup: "arms", partId: "svg-left-arm", intentions: ["奇跡の道具、愛の楽器 触れることで、", "心も触れ合って", "この手が作り出すものは、愛の証です"] },
+            { name: "指先", partGroup: "arms", partId: "svg-left-arm", intentions: ["宇宙の秘密が、指先に宿っています", "繊細な感覚で、世界の美しさを受け取って", "創造の魔法が、ここから生まれます"] },
+
+            // 脚グループ
+            { name: "太もも（ふともも）", partGroup: "legs", partId: "svg-left-leg", intentions: ["力強い推進力、前進するエンジン", "大地を蹴って、未来に向かって歩いていく", "この力で、夢を現実に変えていきます"] },
+            { name: "膝", partGroup: "legs", partId: "svg-left-leg", intentions: ["謙虚にかがみ、柔軟に曲がって", "プライドを手放し、流れに身を任せる", "変化に対応する、やわらかな関節です", "歩みを進めるたびに", "世界と向き合う勇気が生まれる", "しなやかに　しっかりと前へ"] },
+            { name: "ふくらはぎ", partGroup: "legs", partId: "svg-left-leg", intentions: ["第二の心臓、愛の循環ポンプ", "血液を心臓へ送り返す、優しい働き", "歩くたびに、愛が全身を巡っていきます"] },
+            { name: "すね", partGroup: "legs", partId: "svg-left-leg", intentions: ["困難の道でも、まっすぐに立ち向かう", "勇気の骨、意志の支柱（しちゅう）", "この強さで、人生の荒波を乗り越えます"] },
+            { name: "足首", partGroup: "legs", partId: "svg-left-leg", intentions: ["風のように軽やか、水のように柔軟", "変化の波に乗って、バランスを保つ", "適応力の関節が、ここにあります", "柔らかく　自由に　世界と触れる", "動くときも　とどまるときも", "心地よくバランスをとる"] },
+            { name: "足の裏", partGroup: "legs", partId: "svg-left-leg", intentions: ["大地との約束、この星との契約", "一歩一歩に愛を込めて、地球を愛（め）でていく", "ここから安定のエネルギーが、全身に広がります", "わたしは大地を感じ、この瞬間を一歩ずつ生きています", "（…今ここに、まっすぐ立っている感覚）"] },
+            { name: "つま先", partGroup: "legs", partId: "svg-left-leg", intentions: ["未来への羅針盤、方向性の先端", "まだ見ぬ世界に向かって、そっと触れていく", "新しい一歩が、ここから始まります"] },
+
+            // その他の組織グループ（全身をハイライト）
+            { name: "皮膚", partGroup: "body-outline", partId: "svg-body-outline", intentions: ["世界との境界、愛の受信機", "やわらかな境界で、内と外をつなぎながら", "温（ぬく）もりと優しさを、全身で受け取っています"] },
+            { name: "筋肉", partGroup: "body-outline", partId: "svg-body-outline", intentions: ["意志の翻訳者、夢の実現者", "心の想いを、動きに変えてくれる", "この力で、愛を行動に変えていきます"] },
+            { name: "骨", partGroup: "body-outline", partId: "svg-body-outline", intentions: ["人生の設計図、存在の骨組み（ほねぐみ）", "見えない強さで、私を支え続けて", "この構造の上に、人生が築かれています"] },
+            { name: "血液", partGroup: "body-outline", partId: "svg-body-outline", intentions: ["いのちの川、愛の使者 全身を巡って、", "栄養と愛を運んでいく", "この流れの中に、生きる喜びがあります"] },
+            { name: "神経", partGroup: "body-outline", partId: "svg-body-outline", intentions: ["光の回路、情報の詩人", "身体と心を結ぶ、電気の橋", "この繊細なネットワークで、世界を感じています"] }
+        ];
+
+        const container = document.getElementById('body-parts-container');
+        const audioPlayer = document.getElementById('audio-player'); // 部位の詩用
+        const loadingIndicator = document.getElementById('loading-audio-indicator');
+        const audioMessage = document.getElementById('audio-message');
+        const svgParts = document.querySelectorAll('.body-part-svg'); // SVG内のすべてのパス要素
+
+        const meditationAudioPlayer = document.getElementById('meditation-audio-player');
+        const startMeditationButton = document.getElementById('start-meditation-button');
+        const meditationLoadingIndicator = document.getElementById('meditation-loading-indicator');
+        const meditationAudioPlayerWrapper = document.getElementById('meditation-audio-player-wrapper');
+        const guidanceButton = document.getElementById('guidance-button'); // ガイダンスボタン
+
+        // --- オーディオ再生関連のヘルパー関数 ---
+
+        // base64データをArrayBufferに変換
+        function base64ToArrayBuffer(base64) {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // PCMデータをWAV Blobに変換
+        function pcmToWav(pcmData, sampleRate) {
+            const numChannels = 1; // モノラル音声
+            const bytesPerSample = 2; // 16-bit PCM (Int16Array)
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+
+            const wavHeader = new ArrayBuffer(44);
+            const view = new DataView(wavHeader);
+
+            // RIFFチャンクディスクリプタ
+            writeString(view, 0, 'RIFF'); // ChunkID
+            view.setUint32(4, 36 + pcmData.byteLength, true); // ChunkSize
+            writeString(view, 8, 'WAVE'); // Format
+
+            // fmtサブチャンク
+            writeString(view, 12, 'fmt '); // Subchunk1ID
+            view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
+            view.setUint16(20, 1, true); // AudioFormat (1 for PCM)
+            view.setUint16(22, numChannels, true); // NumChannels
+            view.setUint32(24, sampleRate, true); // SampleRate
+            view.setUint32(28, byteRate, true); // ByteRate
+            view.setUint16(32, blockAlign, true); // BlockAlign
+            view.setUint16(34, bytesPerSample * 8, true); // BitsPerSample (16 for 16-bit PCM)
+
+            // dataサブチャンク
+            writeString(view, 36, 'data'); // Subchunk2ID
+            view.setUint32(40, pcmData.byteLength, true); // Subchunk2Size
+
+            // ヘッダーとPCMデータを結合
+            const wavBuffer = new Uint8Array(wavHeader.byteLength + pcmData.byteLength);
+            wavBuffer.set(new Uint8Array(wavHeader), 0);
+            wavBuffer.set(new Uint8Array(pcmData), wavHeader.byteLength);
+
+            return new Blob([wavBuffer], { type: 'audio/wav' });
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        // 音声を生成して再生する汎用関数
+        async function generateAndPlayAudio(text, player, loader, voiceName = "Leda") { // デフォルトボイスをLedaに変更
+            player.pause();
+            player.src = '';
+            player.classList.add('hidden');
+            if (loader) loader.classList.remove('hidden'); // ローディング表示
+            if (audioMessage) audioMessage.classList.add('hidden'); // メッセージ非表示 (部位用)
+
+            try {
+                // NOTE: 実際のAPIキーが必要です。デモ用にダミーレスポンスを返します
+                console.log('音声生成をリクエスト:', text.substring(0, 50) + '...');
+                
+                // デモ用の遅延
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 実際の実装では以下のようなコードになります：
+                /*
+                const payload = {
+                    contents: [{
+                        parts: [{ text: text }]
+                    }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: voiceName }
+                            }
+                        }
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+                const apiKey = "YOUR_API_KEY_HERE";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                */
+
+                // デモ用メッセージ
+                if (audioMessage) { // 部位用のメッセージ
+                    audioMessage.textContent = '音声機能を使用するにはAPIキーが必要です（デモモード）';
+                    audioMessage.classList.remove('hidden');
+                }
+                
+                return false; // デモモードでは常に失敗扱い
+
+            } catch (error) {
+                console.error('Error generating audio:', error);
+                if (audioMessage) { // 部位用のメッセージ
+                    audioMessage.textContent = '音声の生成中にエラーが発生しました。';
+                    audioMessage.classList.remove('hidden');
+                }
+                return false; // 失敗
+            } finally {
+                if (loader) loader.classList.add('hidden'); // ローディング非表示
+            }
+        }
+
+        // --- UIの初期化とイベントリスナーの設定 ---
+
+        // 各身体部位のデータを元にdetails要素を生成し、DOMに追加
+        bodyPartsData.forEach((part, index) => {
+            const detailsElement = document.createElement('details');
+            detailsElement.classList.add('rounded-xl', 'overflow-hidden');
+            detailsElement.dataset.partGroup = part.partGroup; // SVG連携用
+            detailsElement.dataset.partId = part.partId; // 詳細なSVG連携用
+
+            const summaryElement = document.createElement('summary');
+            summaryElement.classList.add('flex', 'items-center', 'justify-between', 'text-xl', 'font-semibold', 'text-gray-700', 'hover:bg-gray-50', 'cursor-pointer', 'transition-colors', 'duration-300', 'ease-in-out');
+            summaryElement.textContent = part.name;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('content', 'text-gray-700');
+
+            // 各意図を段落として追加
+            part.intentions.forEach(intention => {
+                const p = document.createElement('p');
+                p.textContent = intention;
+                p.classList.add('mb-2', 'text-base');
+                contentDiv.appendChild(p);
+            });
+
+            detailsElement.appendChild(summaryElement);
+            detailsElement.appendChild(contentDiv);
+            container.appendChild(detailsElement);
+
+            // details要素の開閉イベントリスナー
+            detailsElement.addEventListener('toggle', () => {
+                if (detailsElement.open) {
+                    // 他のdetails要素を閉じる
+                    document.querySelectorAll('details').forEach(otherDetails => {
+                        if (otherDetails !== detailsElement && otherDetails.open) {
+                            otherDetails.open = false;
+                        }
+                    });
+
+                    // SVGのハイライトを更新
+                    highlightSvgPart(part.partId);
+
+                    // 音声を生成して再生（パーツ名をprepend）
+                    // 表示される文字列を変えずに、読み上げる文字だけ変えるための処理
+                    let spokenPartName = part.name;
+                    const furiganaMatch = part.name.match(/（([^）]+)）/);
+                    if (furiganaMatch && furiganaMatch[1]) {
+                        spokenPartName = furiganaMatch[1]; // 括弧内のフリガナのみを読み上げる
+                    }
+
+                    // 詩の文章内のフリガナも読み上げ時に調整する（表示はそのまま）
+                    // ここで、漢字（フリガナ）の形式をフリガナのみに変換する
+                    const processedIntentions = part.intentions.map(intention => {
+                        return intention
+                            .replace(/（([^）]+)）/g, '$1') // フリガナ変換
+                            .replace(/愛（め）で/g, 'めでて') // 特別な読み方の修正
+                            .replace(/愛（いと）しい/g, 'いとしい') // 特別な読み方の修正
+                            .replace(/温（ぬく）もり/g, 'ぬくもり') // 特別な読み方の修正
+                            .replace(/静（しず）けさ/g, 'しずけさ') // 特別な読み方の修正
+                            .replace(/背負う（せおう）/g, 'せおう') // 特別な読み方の修正
+                            .replace(/血肉（けつにく）/g, 'けつにく') // 特別な読み方の修正
+                            .replace(/旅路（たびじ）/g, 'たびじ') // 特別な読み方の修正
+                            .replace(/支柱（しちゅう）/g, 'しちゅう') // 特別な読み方の修正
+                            .replace(/骨組み（ほねぐみ）/g, 'ほねぐみ') // 特別な読み方の修正
+                            .replace(/響胴（きょうどう）/g, 'きょうどう'); // 特別な読み方の修正
+                    });
+
+                    const fullText = `${spokenPartName}、${processedIntentions.join('。')}`;
+                    generateAndPlayAudio(fullText, audioPlayer, loadingIndicator);
+
+                    // 開いたdetails要素までスクロール
+                    detailsElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                } else {
+                    // detailsが閉じられたらSVGのハイライトを解除し、音声を停止
+                    removeSvgHighlight(part.partId);
+                    audioPlayer.pause();
+                    audioPlayer.src = '';
+                    audioPlayer.classList.add('hidden');
+                    audioMessage.textContent = '部位を選択して音声を聞いてみましょう。';
+                    audioMessage.classList.remove('hidden');
+                }
+            });
+        });
+
+        // SVGパーツのハイライト関数
+        function highlightSvgPart(partIdToHighlight) {
+            // 全てのハイライトを解除
+            svgParts.forEach(svgPart => {
+                svgPart.classList.remove('highlight');
+            });
+
+            // 指定されたpartIdに対応するSVGパーツをハイライト
+            const targetSvgPart = document.getElementById(partIdToHighlight);
+            if (targetSvgPart) {
+                targetSvgPart.classList.add('highlight');
+            }
+        }
+
+        // SVGパーツのハイライト解除関数
+        function removeSvgHighlight(partIdToRemove) {
+            const targetSvgPart = document.getElementById(partIdToRemove);
+            if (targetSvgPart) {
+                targetSvgPart.classList.remove('highlight');
+            }
+        }
+
+        // SVGパーツのクリックイベントリスナー
+        svgParts.forEach(svgPart => {
+            svgPart.addEventListener('click', () => {
+                const partId = svgPart.id; // SVGのidを使用
+                
+                // 複数のSVG要素が同じグループに対応する場合の処理
+                let targetDetails;
+                if (partId === 'svg-left-arm' || partId === 'svg-right-arm') {
+                    targetDetails = document.querySelector(`details[data-part-id="svg-left-arm"]`);
+                } else if (partId === 'svg-left-leg' || partId === 'svg-right-leg') {
+                    targetDetails = document.querySelector(`details[data-part-id="svg-left-leg"]`);
+                } else {
+                    targetDetails = document.querySelector(`details[data-part-id="${partId}"]`);
+                }
+
+                if (targetDetails) {
+                    // 既に開いている場合は閉じる、閉じていれば開く
+                    targetDetails.open = !targetDetails.open;
+
+                    // SVGのハイライトを更新（detailsのtoggleイベントでも行われるが、念のため）
+                    highlightSvgPart(partId);
+
+                    // 開いたdetails要素までスクロール
+                    targetDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
+        // --- 誘導瞑想のロジック ---
+        const meditationScript = `
+            静かな場所で、背中をやさしく支えながら、そっと目を閉じます。
+            ひとつ、呼吸を感じる。吸って……吐いて……
+            吐くたびに、身体の力が抜けていきます。余計な思考、緊張、重さが、ふわりとほどけていきます。
+            もう一度、ゆったりと呼吸。吸うたびに、透明な空気が身体に満ち、吐くたびに、内側がすこしずつ…空っぽになっていきます。
+            吸って……吐いて…体の内側を丁寧に感じます。
+            もう一度吸って……宇宙の奥深くから届く澄んだ光を、ゆっくり身体の中へ迎え入れていきます。
+
+            吐きながら、存在との回路が、やさしく、ゆっくり、目覚めていきます。
+            私たちの体には、ひとすじの光の回路が通っています。
+
+            頭頂から、松果体、のど、胸、みぞおち、丹田、骨盤底、足、そして大地へ。
+
+            そして、大地の奥深くから、足、骨盤底、丹田、みぞおち、胸、のど、松果体、頭頂を通って、
+            宇宙の奥へと、息が、光が通っていく。
+            　
+            この光の柱は、わたしという存在をつらぬく、音の通り道。
+            存在の息吹が、この柱を通って、今この身体に宿っている。
+
+            静けさの中で、今ここに在る。
+            あなたという存在が、すっと"今"に還ってきます。
+
+
+            光がともる。
+            ここから、身体の曼荼羅が静かに目を覚ましていきます。
+            パーツを選んで、そこに意識を向けて、優しく呼吸を送ります。
+            今、ひとつの場所に、そっと光がともります。
+            ふわっと温かく、やさしく照らされるように。
+            存在の意図の詩を聞きながら、細胞が目覚めていくのを感じます。
+            あなたが選んだその場所が、まるで呼吸するように光のゆらぎをまとい、小さな存在がそこでくつろいでいるよう。
+            ひとつひとつの部位が、
+            呼吸とともに、意図をもった"存在"として起動し、
+            目覚め、光り、静かに揺れています。
+
+            その場所が意図をもって目覚めていきます。
+        `;
+
+        // 「ガイダンス」ボタンのイベントリスナー
+        guidanceButton.addEventListener('click', async () => {
+            // 瞑想開始の処理を直接実行
+            startMeditationButton.disabled = true;
+            meditationAudioPlayerWrapper.classList.remove('hidden'); // ラッパーを表示
+            meditationLoadingIndicator.classList.remove('hidden'); // ローディングスピナーを表示
+            meditationAudioPlayer.classList.add('hidden'); // プレイヤーを隠す
+
+            const success = await generateAndPlayAudio(meditationScript, meditationAudioPlayer, meditationLoadingIndicator);
+
+            if (success) {
+                meditationAudioPlayer.classList.remove('hidden');
+                meditationAudioPlayer.play();
+            } else {
+                // エラー時はメッセージを表示
+                meditationLoadingIndicator.classList.add('hidden');
+                const errorMsg = document.createElement('p');
+                errorMsg.textContent = '音声機能を使用するにはAPIキーが必要です（デモモード）';
+                errorMsg.className = 'text-gray-600 text-sm mt-2';
+                meditationAudioPlayerWrapper.appendChild(errorMsg);
+            }
+
+            // 終了時のイベントリスナー（一度だけ実行）
+            meditationAudioPlayer.addEventListener('ended', () => {
+                startMeditationButton.disabled = false;
+                meditationAudioPlayerWrapper.classList.add('hidden');
+                meditationLoadingIndicator.classList.add('hidden');
+            }, { once: true });
+        });
+
+
+        startMeditationButton.addEventListener('click', async () => {
+            startMeditationButton.disabled = true;
+            meditationLoadingIndicator.classList.remove('hidden'); // ローディングスピナーを表示
+            meditationAudioPlayer.classList.add('hidden'); // プレイヤーを隠す
+
+            const success = await generateAndPlayAudio(meditationScript, meditationAudioPlayer, meditationLoadingIndicator);
+
+            if (success) {
+                meditationAudioPlayer.classList.remove('hidden');
+                meditationAudioPlayer.play();
+            } else {
+                // エラー時はメッセージを表示
+                meditationLoadingIndicator.classList.add('hidden');
+                // 必要であれば瞑想用のエラーメッセージを表示
+            }
+
+            meditationAudioPlayer.addEventListener('ended', () => {
+                startMeditationButton.disabled = false;
+                meditationAudioPlayer.classList.add('hidden'); // プレイヤーを隠す
+                meditationLoadingIndicator.classList.add('hidden'); // ローディングスピナーを隠す
+            }, { once: true }); // 一度だけ実行
+        });
+
+        // 初期状態でオーディオプレイヤーを隠す
+        audioPlayer.classList.add('hidden');
+        audioMessage.classList.remove('hidden');
+        meditationAudioPlayerWrapper.classList.add('hidden'); // 瞑想ラッパーも初期は隠す
+
+    </script>
+</body>
+</html>
