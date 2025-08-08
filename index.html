@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>身体曼荼羅 - 身体の部位と意図</title>
+<style>
+    body {
+        font-family: 'Meiryo', Meiryo, '游ゴシック', YuGothic, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+        line-height: 1.8;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        position: relative;
+    }
+    h1 {
+        text-align: center;
+        color: #560080;
+        border-bottom: 2px solid #e0b0ff;
+        padding-bottom: 10px;
+    }
+    h2 {
+        color: #5e0095;
+        border-left: 5px solid #e0b0ff;
+        padding-left: 10px;
+        margin-top: 40px;
+    }
+    h3 {
+        color: #780592;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        border-bottom: 1px dotted #ccc;
+        padding-bottom: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+    h3:hover {
+        background-color: #f8f0ff;
+        transform: translateY(-1px);
+    }
+    h3.is-loading {
+        background-color: #f0e6f8;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    p {
+        margin: 0;
+        padding: 0;
+    }
+    .introduction {
+        text-align: center;
+        margin: 20px 0 40px 0;
+        font-style: italic;
+        color: #555;
+    }
+    .part {
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .intentions {
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+    .intention-item {
+        margin-bottom: 15px;
+        list-style-type: none;
+    }
+    .intention-item:before {
+        content: '✨';
+        margin-right: 10px;
+    }
+    .note {
+        font-size: 0.9em;
+        color: #777;
+        margin-left: 20px;
+    }
+    .intention-text {
+        white-space: pre-line;
+    }
+    details {
+        margin-top: 40px;
+    }
+    summary {
+        font-size: 1.5em;
+        color: #5e0095;
+        cursor: pointer;
+        outline: none;
+        border-left: 5px solid #e0b0ff;
+        padding: 10px 0 10px 20px;
+        list-style: none;
+        font-weight: bold;
+        position: relative;
+    }
+    summary::before {
+        content: '▶';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+        transition: transform 0.2s ease-in-out;
+        color: #e0b0ff;
+        font-size: 0.8em;
+    }
+    details[open] summary::before {
+        transform: translateY(-50%) rotate(90deg);
+    }
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .loading-indicator {
+        margin-top: 10px;
+        text-align: center;
+        color: #5e0095;
+        font-style: italic;
+        display: none;
+    }
+
+    .meditation-buttons {
+        text-align: center;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .meditation-buttons button {
+        padding: 10px 20px;
+        font-size: 1em;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        font-weight: bold;
+        transition: transform 0.2s, box-shadow 0.2s;
+        background: linear-gradient(135deg, #a052e0, #7d2ae8);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .meditation-buttons button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+    }
+    .meditation-buttons button:active {
+        transform: translateY(0);
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .meditation-buttons button.is-loading {
+        background: linear-gradient(135deg, #d0a0ff, #b080ff);
+        pointer-events: none;
+    }
+
+    #error-message-box {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #8c52ff;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        z-index: 1000;
+        display: none;
+        max-width: 90%;
+        text-align: center;
+        font-weight: bold;
+        animation: fadeinout 5s forwards;
+    }
+
+    @keyframes fadeinout {
+        0% { opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<h1>身体曼荼羅 - 身体の部位と意図</h1>
+
+<div class="introduction">
+    <p>ゆっくりと各部位に意識の光を当てて、</p>
+    <p>優しく呼吸を送りながら、詩を読み上げてみてください。</p>
+    <p>細胞がふわっと緩み、身体と世界がつながっていく感覚を味わってください。</p>
+    <div id="loading-indicator" class="loading-indicator">読み込み中...</div>
+</div>
+
+<details>
+    <summary>■誘導瞑想ガイド</summary>
+    <div class="meditation-buttons">
+        <button id="start-meditation">ガイド開始</button>
+        <button id="end-meditation">ガイド終了</button>
+    </div>
+</details>
+
+<details>
+    <summary>■頭部・顔</summary>
+    <div class="part">
+        <h3>頭頂部</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">天の扉がここにある、静かに開いています<br>宇宙の光が流れ込み、わたしを満たしていく<br>無限の広がりと、ひとつになります</p></li>
+            <li class="intention-item"><p class="intention-text">わたしは空とつながり、澄んだ意識を受け取ります</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>額</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">明晰な光が額に宿り、雲を晴らします<br>思考の波が静まり、智慧の泉が湧き上がる<br>ここから、新しい世界が見えてきます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>眉</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">まゆの間から、静けさが生まれます<br>心の奥の扉が、そっと開いていく<br>見えないものが、見えてきます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>目</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">世界を映す窓、内なる光の灯台<br>見つめることで、愛が生まれます<br>この瞳に映るすべてが、美しい</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>鼻</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">いのちの息が、鼻を通り抜けて<br>香りとともに、記憶が蘇ります<br>一息ごとに、今ここに帰ってきます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>頬</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">やわらかな頬に、微笑みが宿る<br>温かさが内側から広がって<br>優しさという名の光が、ここから始まります</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>口</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">言葉の生まれる場所、魂の歌声<br>ここから愛が語られ、真実が紡がれます<br>沈黙の美しさも、この口が知っています</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>喉・声</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">この声は、いのちの響き。<br>恐れを超えて、伝えたいものがある<br>わたしの奥から、震えが立ちのぼる</p></li>
+            <li class="intention-item"><p class="intention-text">私の存在の震えを、音にして、世界に響かせます</p></li>
+        </ul>
+    </div>
+</details>
+
+<details>
+    <summary>■上半身</summary>
+    <div class="part">
+        <h3>肩</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">重荷を降ろして、翼のように軽やか<br>大きく息を吸うと、肩が空に向かって開いていく<br>背負うものと手放すもの、その境界がここにあります</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>腕</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">抱きしめるため、差し伸べるため<br>この腕は愛の表現です<br>力強さと優しさを、バランスよく持ち合わせています</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>手</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">創造の手、癒しの手<br>触れることで、愛を伝えます<br>この手のひらに、宇宙のエネルギーが宿っています</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>胸</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">心臓の鼓動が、生命のリズムを刻む<br>愛と勇気の源泉がここにあります<br>胸を開いて、世界を抱きしめます</p></li>
+        </ul>
+    </div>
+</details>
+
+<details>
+    <summary>■背骨</summary>
+    <div class="part">
+        <h3>背骨</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">天と地をつなぐ光の柱<br>まっすぐに立つ意志が、ここから生まれます<br>しなやかな強さで、人生を支えています</p></li>
+        </ul>
+    </div>
+</details>
+
+<details>
+    <summary>■体幹・内臓</summary>
+    <div class="part">
+        <h3>お腹</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">生命力の中心、直感の座<br>ここから勇気が湧き上がります<br>深い呼吸とともに、力が満ちていきます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>腰</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">身体の要、安定の要石<br>ここから動きが生まれ、ここに戻ってきます<br>大地とのつながりを、腰が教えてくれます</p></li>
+        </ul>
+    </div>
+</details>
+
+<details>
+    <summary>■下半身</summary>
+    <div class="part">
+        <h3>足</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">歩み続ける意志、前進する力<br>一歩一歩が、人生の軌跡を描きます<br>大地を踏みしめて、未来へ向かいます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>膝</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">柔軟性と強さの象徴<br>跪くことで謙虚さを学び、立ち上がることで勇気を得ます<br>人生の曲がり角を、優雅に歩んでいきます</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>足の裏</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">大地との接点、根っこの感覚<br>ここから地球のエネルギーを受け取ります<br>しっかりと立ち、安心して歩んでいきます</p></li>
+        </ul>
+    </div>
+</details>
+
+<details>
+    <summary>■その他の組織</summary>
+    <div class="part">
+        <h3>筋肉</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">動きを生み出す力、意志を形にする道具<br>柔らかく、しなやかに、力強く<br>この筋肉に感謝を込めて、大切に使います</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>骨</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">身体の骨組み、魂の住まい<br>見えない強さで、すべてを支えています<br>時を超えて続く、生命の証です</p></li>
+        </ul>
+    </div>
+
+    <div class="part">
+        <h3>血液</h3>
+        <ul class="intentions">
+            <li class="intention-item"><p class="intention-text">生命の川、愛の流れ<br>全身を巡り、生きる力を運んでいます<br>温かな血液に、感謝の気持ちを送ります</p></li>
+        </ul>
+    </div>
+</details>
+
+<div id="error-message-box"></div>
+
+<script>
+    // 読み方変換の辞書
+    const pronunciationMap = {
+        '頭頂部': 'ずじょうぶ',
+        '額': 'ひたい',
+        '眉': 'まゆ',
+        '目': 'め',
+        '鼻': 'はな',
+        '頬': 'ほお',
+        '口': 'くち',
+        '喉': 'のど',
+        '声': 'こえ',
+        '肩': 'かた',
+        '腕': 'うで',
+        '手': 'て',
+        '胸': 'むね',
+        '背骨': 'せぼね',
+        'お腹': 'おなか',
+        '腰': 'こし',
+        '足': 'あし',
+        '膝': 'ひざ',
+        '足の裏': 'あしのうら',
+        '筋肉': 'きんにく',
+        '骨': 'ほね',
+        '血液': 'けつえき'
+    };
+
+    // 漢字を読み方に変換する関数
+    function convertToHiragana(text) {
+        let converted = text;
+        for (const [kanji, hiragana] of Object.entries(pronunciationMap)) {
+            converted = converted.replace(new RegExp(kanji, 'g'), hiragana);
+        }
+        return converted;
+    }
+
+    function base64ToArrayBuffer(base64) {
+        const binaryString = atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    function pcmToWav(pcmData, sampleRate) {
+        const numChannels = 1;
+        const bitsPerSample = 16;
+        const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+        const blockAlign = numChannels * bitsPerSample / 8;
+        
+        const buffer = new ArrayBuffer(44 + pcmData.length * 2);
+        const view = new DataView(buffer);
+
+        let offset = 0;
+        function writeString(str) {
+            for (let i = 0; i < str.length; i++) {
+                view.setUint8(offset++, str.charCodeAt(i));
+            }
+        }
+        
+        writeString('RIFF');
+        view.setUint32(offset, 36 + pcmData.length * 2, true); offset += 4;
+        writeString('WAVE');
+        
+        writeString('fmt ');
+        view.setUint32(offset, 16, true); offset += 4;
+        view.setUint16(offset, 1, true); offset += 2;
+        view.setUint16(offset, numChannels, true); offset += 2;
+        view.setUint32(offset, sampleRate, true); offset += 4;
+        view.setUint32(offset, byteRate, true); offset += 4;
+        view.setUint16(offset, blockAlign, true); offset += 2;
+        view.setUint16(offset, bitsPerSample, true); offset += 2;
+        
+        writeString('data');
+        view.setUint32(offset, pcmData.length * 2, true); offset += 4;
+        
+        for (let i = 0; i < pcmData.length; i++, offset += 2) {
+            view.setInt16(offset, pcmData[i], true);
+        }
+
+        return new Blob([view], { type: 'audio/wav' });
+    }
+    
+    function showErrorMessage(message) {
+        const errorMessageBox = document.getElementById('error-message-box');
+        errorMessageBox.textContent = message;
+        errorMessageBox.style.display = 'block';
+        errorMessageBox.style.animation = 'none';
+        setTimeout(() => {
+            errorMessageBox.style.animation = 'fadeinout 5s forwards';
+        }, 10);
+    }
+
+    async function textToSpeech(text, voiceName, loadingElement) {
+        if (!text) {
+            console.warn('textToSpeech called with empty text.');
+            return Promise.resolve();
+        }
+        
+        loadingElement.style.display = 'block';
+
+        const apiKey = "AIzaSyBVBns9vFJ1bXYeGzMaJpmmMWEbRHbDMi8"; // ここにGemini APIキーを入れてください
+        if (!apiKey) {
+            loadingElement.style.display = 'none';
+            showErrorMessage('音声機能を使用するにはGemini APIキーの設定が必要です。');
+            return Promise.reject(new Error('API key not configured.'));
+        }
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [{
+                parts: [{ text: text }]
+            }],
+            generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                    voiceConfig: {
+                        prebuiltVoiceConfig: { voiceName: voiceName }
+                    }
+                }
+            }
+        };
+        
+        const maxRetries = 3;
+        let response;
+        
+        // APIリクエストの試行と指数バックオフ
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    break;
+                } else if (response.status === 400) {
+                    console.error('API Error: Bad request. Check the text content or voice configuration.');
+                    showErrorMessage('音声の生成に失敗しました。読み上げるテキストに問題がある可能性があります。');
+                    throw new Error('API Error: Bad request.');
+                }
+            } catch (error) {
+                console.error(`Fetch attempt ${i + 1} failed:`, error);
+                if (i < maxRetries - 1) {
+                    await new Promise(resolve => setTimeout(resolve, (2 ** i) * 1000));
+                } else {
+                    loadingElement.style.display = 'none';
+                    showErrorMessage('ネットワークエラーが発生しました。インターネット接続を確認し、再度お試しください。');
+                    return Promise.reject(new Error('Network request failed after multiple retries.'));
+                }
+            }
+        }
+        
+        if (!response || !response.ok) {
+            const errorText = response ? await response.text() : 'No response from server.';
+            console.error('API call failed with status:', response?.status, 'Response text:', errorText);
+            loadingElement.style.display = 'none';
+            showErrorMessage(`APIリクエストが失敗しました。エラーコード: ${response?.status}。時間をおいて、再度お試しください。`);
+            return Promise.reject(new Error('API request failed.'));
+        }
+
+        try {
+            const result = await response.json();
+            console.log('API Response:', result);
+
+            // 応答が正しい構造か厳密にチェック
+            const candidates = result.candidates;
+            if (!candidates || candidates.length === 0) {
+                console.error('API Response Error: No candidates found.');
+                showErrorMessage('音声データの生成に失敗しました。APIの応答が不正です。');
+                throw new Error('Unexpected API response structure: No candidates found.');
+            }
+
+            const content = candidates[0].content;
+            const parts = content?.parts;
+            if (!content || !parts || parts.length === 0) {
+                console.error('API Response Error: No content parts found in candidate 0.');
+                showErrorMessage('音声データの生成に失敗しました。APIの応答が不正です。');
+                throw new Error('Unexpected API response structure: No content parts found.');
+            }
+
+            const part = parts[0];
+            const audioData = part?.inlineData?.data;
+            const mimeType = part?.inlineData?.mimeType;
+
+            if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                const match = mimeType.match(/rate=(\d+)/);
+                const sampleRate = match ? parseInt(match[1], 10) : 16000;
+                
+                // Base64からWAVに変換し、Audioオブジェクトで再生
+                const pcmData = base64ToArrayBuffer(audioData);
+                const pcm16 = new Int16Array(pcmData);
+                const wavBlob = pcmToWav(pcm16, sampleRate);
+                const audioUrl = URL.createObjectURL(wavBlob);
+                
+                const audio = new Audio(audioUrl);
+                
+                // 再生完了を待つPromise
+                return new Promise((resolve, reject) => {
+                    audio.play();
+                    audio.onended = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        resolve();
+                    };
+                    audio.onerror = (e) => {
+                        console.error('Audio playback error:', e);
+                        showErrorMessage('音声の再生中にエラーが発生しました。ブラウザの環境をご確認ください。');
+                        reject(new Error('Audio playback failed.'));
+                    };
+                });
+            } else {
+                console.error('API Response Error: Missing or invalid audio data in the response.');
+                showErrorMessage('音声の生成に失敗しました。音声データが不正です。');
+                return Promise.reject(new Error('Unexpected API response structure: Missing or invalid audio data.'));
+            }
+        } catch (error) {
+            console.error('Failed to parse or process TTS audio:', error);
+            showErrorMessage('音声の処理中に予期せぬエラーが発生しました。');
+            return Promise.reject(error);
+        } finally {
+            // 処理が完了したらローディングインジケーターを非表示にする
+            loadingElement.style.display = 'none';
+        }
+    }
+
+    window.onload = function() {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        const h3Elements = document.querySelectorAll('h3');
+        h3Elements.forEach(element => {
+            element.addEventListener('click', async function(event) {
+                const part = element.closest('.part');
+                if (part) {
+                    // h3のテキストを読み方に変換
+                    const titleText = convertToHiragana(element.textContent.trim());
+                    let bodyText = '';
+                    const pTags = part.querySelectorAll('.intention-text');
+                    pTags.forEach(p => {
+                        bodyText += ' ' + convertToHiragana(p.textContent.trim());
+                    });
+
+                    element.classList.add('is-loading');
+                    
+                    try {
+                        await textToSpeech(titleText, 'Leda', loadingIndicator);
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        await textToSpeech(bodyText, 'Leda', loadingIndicator);
+                    } catch (error) {
+                        console.error('Playback sequence failed:', error);
+                    } finally {
+                        element.classList.remove('is-loading');
+                    }
+                }
+            });
+        });
+
+        const startButton = document.getElementById('start-meditation');
+        const endButton = document.getElementById('end-meditation');
+
+        const startMeditationText = convertToHiragana("それでは、ゆっくりと呼吸を始めましょう。まずは、心地よい姿勢を見つけてください。座っていても、横になっていても構いません。背筋をそっと伸ばし、肩の力を抜いて、全身の重みを大地に預けます。目をそっと閉じ、自分の内側へと意識を向けていきましょう。深呼吸を一度。吸う息で、宇宙の光が頭のてっぺんから入ってくるのを感じます。吐く息で、その光が全身を巡り、足の先から大地へと戻っていくのをイメージしてください。この光が、あなたの身体の隅々まで満たし、細胞の一つ一つを優しく癒していきます。すべての緊張が、この呼吸とともに溶け出していくのを感じます。あなたは今、この瞬間に、完璧な存在です。");
+
+        const endMeditationText = convertToHiragana("それでは、ゆっくりと意識を今ここへと戻していきましょう。足の指、手の指をそっと動かしてみてください。全身の感覚を少しずつ取り戻します。ゆっくりと深く、もう一度深呼吸。心の中で、この時間に感謝の気持ちを伝えます。準備ができたと感じたら、ゆっくりと優しく、目を開けてください。新しい、クリアな意識で、この後の時間を過ごしてください。");
+        
+        if (startButton) {
+            startButton.addEventListener('click', async () => {
+                startButton.classList.add('is-loading');
+                try {
+                    await textToSpeech(startMeditationText, 'Fenrir', loadingIndicator);
+                } catch (error) {
+                    console.error('Meditation start failed:', error);
+                } finally {
+                    startButton.classList.remove('is-loading');
+                }
+            });
+        }
+
+        if (endButton) {
+            endButton.addEventListener('click', async () => {
+                endButton.classList.add('is-loading');
+                try {
+                    await textToSpeech(endMeditationText, 'Fenrir', loadingIndicator);
+                } catch (error) {
+                    console.error('Meditation end failed:', error);
+                } finally {
+                    endButton.classList.remove('is-loading');
+                }
+            });
+        }
+    };
+</script>
+
+</body>
+</html>
